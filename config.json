@@ -1,0 +1,13 @@
+{
+    "token":"your discord bot secret token",
+    "prefix":"!",
+    "embed":{
+        "color":"#ff5b5b",
+        "footer":"By Androz#2091 | Open Source DiscordBot"
+    },
+    "administrators":[
+        "User#0000",
+        "User2#0000",
+        "Clyde#0000"
+    ]
+}
