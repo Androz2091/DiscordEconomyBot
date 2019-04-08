@@ -1,7 +1,7 @@
 const Discord = require("discord.js"), // npm install discord.js
 ms = require('ms'), // npm install ms
 quickdb = require('quick.db'), // npm install quick.db
-AsciiTable = require('ascii-table'); // npm install ascii-table
+asciitable = require('ascii-table'); // npm install ascii-table
 
 /* Create tables */
 const users_data = new quickdb.table('usersdata'),
@@ -53,6 +53,9 @@ bot.on('message', async (message) => {
     // updates the user data by adding xp
     updateXp(message, author_data);
 
+    // Check if the member is an administrator
+    var isAdmin = config.administrators.includes(message.author.id);
+    
     /* USER COMMANDS */
 
     switch(command){
@@ -284,7 +287,7 @@ bot.on('message', async (message) => {
                 .setFooter(config.embed.footer)
 
             // Creates a new ascii table and set the heading
-            var table = new AsciiTable('LEADERBOARD').setHeading('', 'Utilisateur', 'Argent', 'Réputation');
+            var table = new asciitable('LEADERBOARD').setHeading('', 'Utilisateur', 'Argent', 'Réputation');
 
             // Put all users in the new table
             fetchUsers(leaderboard, table).then(newTable => {
@@ -294,8 +297,6 @@ bot.on('message', async (message) => {
             break;
 
         /* ADMIN COMMANDS */
-        // Check if the member is an administrator
-        var isAdmin = config.administrators.includes(message.author.id);
 
         /**
          *  command 'setcredits'
