@@ -2,7 +2,7 @@
   "name": "discordeconomybot",
   "version": "1.0.0",
   "description": "A very simple bot with an economy system using the Discord.js API",
-  "main": "economie.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
