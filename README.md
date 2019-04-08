@@ -12,7 +12,7 @@ This bot contains the following commands :
   * `Pay` (allows you to send credits to other members)
   * `Leaderboard` (display the first 20 members (for credits))
   * `Premium` (admin-only, this command define if a member is premium... or not)
-  * `Cooldow` (admin-only, this command allows you to reinitialize a member's cooldown for a certain command)
+  * `Cooldown` (admin-only, this command allows you to reinitialize a member's cooldown for a certain command)
   * `Setcredits` (admin-only, this command allows you to define the number of credits of a member)
   
 # Setup
@@ -40,10 +40,6 @@ In the footer field, put what you want, it will appear at the bottom of the embe
 The administrators field is an array of Username#Discriminator.
 
 # Node modules
-You need to install the following node modules :
-  * quick.db (`npm install quick.db`)
-  * discord.js (`npm install discord.js`)
-  * ms (`npm install ms`)
-  * ascii-table (`npm install ascii-table`)
+To install the required node modules, simply type `npm install` and all dependencies will be installed!
 
 Once all this is done, you can start the `main.js` file!
