@@ -26,9 +26,8 @@ You need to edit the config.json file before starting the bot.
         "footer":"By Androz#2091"
     },
     "administrators":[
-        "User#0000",
-        "User2#0000",
-        "Clyde#0000"
+        "AdminID",
+        "AdminID"
     ]
 }
 ```
@@ -37,7 +36,7 @@ In the prefix field, put your bot prefix (the character(s) before the command). 
 The embed object contains two values : `color` and `footer`. 
 In the color field, put an hexadecimal color, this will be used for the color to the left of the embeds. 
 In the footer field, put what you want, it will appear at the bottom of the embeds, maybe the name of your bot?
-The administrators field is an array of Username#Discriminator.
+The administrators field (the accounts that will be able to execute admin only commands) is an array of Discord users ID.
 
 # Node modules
 To install the required node modules, simply type `npm install` and all dependencies will be installed!
