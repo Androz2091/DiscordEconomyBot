@@ -1,0 +1,25 @@
+{
+  "name": "discordeconomybot",
+  "version": "1.0.0",
+  "description": "A very simple bot with an economy system using the Discord.js API",
+  "main": "economie.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Androz2091/DiscordEconomyBot.git"
+  },
+  "author": "Androz#2091",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Androz2091/DiscordEconomyBot/issues"
+  },
+  "homepage": "https://github.com/Androz2091/DiscordEconomyBot#readme",
+  "dependencies": {
+    "ascii-table": "0.0.9",
+    "discord.js": "^11.4.2",
+    "ms": "^2.1.1",
+    "quick.db": "^7.0.0-b22"
+  }
+}
