@@ -54,7 +54,7 @@ bot.on('message', async (message) => {
     updateXp(message, author_data);
 
     // Check if the member is an administrator
-    var isAdmin = config.administrators.includes(message.author.id);
+    var isAdmin = config.administrators.includes(message.author.id) || config.administrators.includes(`${message.author.username}#${message.author.discriminator}`);
     
     /* USER COMMANDS */
 
