@@ -208,7 +208,6 @@ bot.on('message', async (message) => {
                 .setDescription(`${salary} crédits ajoutés à votre profil !`)
                 .setFooter('Pour les membres premiums, le salaire est doublé !')
                 .setColor(config.embed.color) // Sets the color of the embed
-                .setFooter(config.embed.footer) // Sets the footer of the embed
                 .setTimestamp();
             
             // Update user data
