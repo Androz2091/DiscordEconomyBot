@@ -38,7 +38,7 @@ In the color field, put an hexadecimal color, this will be used for the color to
 In the footer field, put what you want, it will appear at the bottom of the embeds, maybe the name of your bot?
 The administrators field (the accounts that will be able to execute admin only commands) is an array of Discord users ID or Username#Tag.
 
-# Node modules
+# Start the bot
 To install the required node modules, simply type `npm install` and all dependencies will be installed!
 
 Once all this is done, you can start the `main.js` file!
