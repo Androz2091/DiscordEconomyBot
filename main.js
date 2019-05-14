@@ -159,17 +159,18 @@ bot.on('message', async (message) => {
             if(member.id === message.author.id) return message.reply('vous ne pouvez pas vous payer vous même !');
 
             // gets the amount of credits to send
-            var amout_to_pay = args[1];
+            var amount_to_pay = args[1];
             // if the member has not entered a valid amount, display an error message
-            if(!amout_to_pay) return message.reply(`vous devez entrer un montant à verser à **${member.user.username}** !`);
-            if(isNaN(amout_to_pay)) return message.reply('montant invalide.');
+            if(!amount_to_pay) return message.reply(`vous devez entrer un montant à verser à **${member.user.username}** !`);
+            if(isNaN(amount_to_pay)) return message.reply('montant invalide.');
+            if(amount_to_pay < 1) return message.reply('montant invalide.');
             // if the member does not have enough credits
-            if(amout_to_pay > author_data.credits) return message.reply('vous ne disposez pas d\'assez de crédits pour effectuer cette transaction !');
+            if(amount_to_pay > author_data.credits) return message.reply('vous ne disposez pas d\'assez de crédits pour effectuer cette transaction !');
 
             // Adding credits to the receiver
-            users_data.add(`${member.id}.credits`, amout_to_pay);
+            users_data.add(`${member.id}.credits`, amount_to_pay);
             // Removes credits from the sender
-            users_data.subtract(`${message.author.id}.credits`, amout_to_pay);
+            users_data.subtract(`${message.author.id}.credits`, amount_to_pay);
 
             // Send a success message
             message.reply('transaction effectuée.');
