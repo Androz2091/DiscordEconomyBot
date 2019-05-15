@@ -12,7 +12,8 @@ cooldowns = {
 };
 
 
-const config = require("./config.json"), // Load config.json file
+const config = require("./config.json"); // Load config.json file
+functions = require("./functions.js"),
 bot = new Discord.Client() // Create the discord Client
 
 bot.login(config.token); // Discord authentification
@@ -24,7 +25,7 @@ bot.on("ready", () => { // When the bot is ready
 });
 
 
-bot.on("message", async (message) => {
+bot.on("message", (message) => {
         
     // If the message comes from a bot, cancel
     if(message.author.bot || !message.guild){
@@ -34,10 +35,6 @@ bot.on("message", async (message) => {
     // If the message does not start with the prefix, cancel
     if(!message.content.startsWith(config.prefix)){
         return;
-    }
-
-    if(!message.member){
-        await message.guild.fetchMember(message.author.id);
     }
 
     // Update message mentions
@@ -50,20 +47,20 @@ bot.on("message", async (message) => {
     const command = args.shift().toLowerCase();
 
     // Get the current message author information or create a new default profile
-    var authorData = usersData.get(message.author.id) || createUser(message.author);
+    var authorData = usersData.get(message.author.id) || functions.createUser(message.author, usersData);
 
     var membersData = []; // Initialize a new empty array
 
     if(message.mentions.members.size > 0){ // If some members are mentionned
         message.mentions.members.forEach(member => { // For each member
             // Get the current member information or create a new default profile
-            var memberData = usersData.get(member.id) || createUser(member.user);
+            var memberData = usersData.get(member.id) || functions.createUser(member.user, usersData);
             membersData.push(memberData);
         });
     }
 
     // updates the user data by adding xp
-    updateXp(message, authorData);
+    functions.updateXp(message, authorData, [usersData, cooldowns.xp]);
 
     // Check if the member is an administrator
     var isAdmin = config.administrators.includes(message.author.id) || config.administrators.includes(message.author.tag);
@@ -128,9 +125,9 @@ bot.on("message", async (message) => {
                 // Display the creation date of the member
                 .addField("📅 Enregistré", "Le "+data.registeredAt, true)
                 // Display the level of the member
-                .addField("📊 Niveau", "**"+data.niv.level+"**", true)
+                .addField("📊 Niveau", "**"+data.level+"**", true)
                 // Display the xp of the member
-                .addField("🔮 Expérience", "**"+data.niv.xp+"** xp", true)
+                .addField("🔮 Expérience", "**"+data.xp+"** xp", true)
                 .setColor(config.embed.color) // Sets the color of the embed
                 .setFooter(config.embed.footer) // Sets the footer of the embed
                 .setTimestamp();
@@ -218,7 +215,7 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    let delay = convertMs(isInCooldown - Date.now()); 
+                    let delay = functions.convertMs(isInCooldown - Date.now()); 
                     return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau travailler !");
                 }
             }
@@ -259,7 +256,7 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    let delay = convertMs(isInCooldown - Date.now()); 
+                    let delay = functions.convertMs(isInCooldown - Date.now()); 
                     return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau executer cette commande !");
                 }
             }
@@ -315,7 +312,7 @@ bot.on("message", async (message) => {
             });
 
             // Sort the array by credits
-            leaderboard = sortByKey(leaderboard, "credits");
+            leaderboard = functions.sortByKey(leaderboard, "credits");
             // Resize the leaderboard
             if(leaderboard.length > 20){
                 leaderboard.length = 20;
@@ -330,7 +327,7 @@ bot.on("message", async (message) => {
             var table = new asciitable("LEADERBOARD").setHeading("", "Utilisateur", "Argent", "Réputation");
 
             // Put all users in the new table
-            fetchUsers(leaderboard, table).then(newTable => {
+            functions.fetchUsers(leaderboard, table, bot).then(newTable => {
                 // Send the table in the current channel
                 message.channel.send("```"+newTable.toString()+"```");
             });
@@ -448,149 +445,5 @@ bot.on("message", async (message) => {
             message.reply("le cooldown de **"+member.user.username+"** pour la commande **"+cmd+"** a été réinitialisé !");
             break;
     }
-    
 
 });
-
-/**
- * createUser
- * This function init a default profile for the user
-*/
-
-function createUser(user){
-
-    // Set defaults user information
-    usersData.set(user.id, {
-        credits:0,
-        rep:0,
-        niv: { level:0, xp:0 },
-        desc:"unknow",
-        premium:"false",
-        registeredAt:printDate(new Date(Date.now()))
-    });
-
-    // Log in the console
-    console.log("\x1b[32m","[DB]","\x1b[0m", "User \""+user.username+"\" registered ! ID : \""+user.id+"\"");
-
-    // Return user data
-    return usersData.get(user.id);
-}
-
-/**
- * xp
- * This function update userdata by adding xp
-*/
-
-function updateXp(msg, userdata){
-
-    // Gets the user informations
-    var xp = parseInt(userdata.niv.xp, 10);
-    var level = parseInt(userdata.niv.level, 10);
-
-    // if the member is already in the cooldown db
-    var isInCooldown = cooldowns.xp.get(msg.author.id);
-    if(isInCooldown){
-        /*if the timestamp recorded in the database indicating 
-        when the member will be able to win xp again
-        is greater than the current date, return */
-        if(isInCooldown > Date.now()){
-            return;
-        }
-    }
-    // Records in the database the time when the member will be able to win xp again (3min)
-    var towait = Date.now() + ms("1m");
-    cooldowns.xp.set(msg.author.id, towait);
-    
-    // Gets a random number between 10 and 5 
-    let won = Math.floor(Math.random() * ( Math.floor(10) - Math.ceil(5))) + Math.ceil(5);
-    
-    let newXp = parseInt(xp + won, 10);
-
-    // Update user data
-    usersData.set(msg.author.id+".niv.xp", newXp);
-
-    // calculation how many xp it takes for the next new one
-    let needed_xp = 5 * (level * level) + 80 * level + 100;
-
-    // check if the member up to the next level
-    if(newXp > needed_xp){
-        level++;
-    }
-
-    // Update user data
-    usersData.set(msg.author.id+".niv.level", level);
-}
-/**
- * fetchUsers
- * This function is used to fetch all users for the leaderboard command
-*/
-
-async function fetchUsers(array, table) {
-    // Create promise
-    return new Promise((resolve, reject) => {
-        // Init counter
-        var pos = 0;
-        // Init new array
-        var narray = [];
-        array.forEach(element => {
-            bot.fetchUser(element.id).then(user => {
-                 // Update counter variable
-                pos++;
-                // Update the username of the user 
-                var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
-                _user = user.username.replace(regex, "");
-                if(_user.length > 20){
-                    _user.length = 20;
-                }
-                // Add new row to the ascii table
-                table.addRow(pos, _user, element.credits, element.rep);
-            });
-        });
-        // Return the table
-        resolve(table);
-    });
-}
-
-function printDate(pdate){
-    // An array of the months
-    var monthNames = [
-        "janvier", "février", "mars",
-        "avril", "mai", "juin", "juillet",
-        "août", "septembre", "octobre",
-        "novembre", "décembre"
-    ];
-
-    // Get date informations
-    var day = pdate.getDate(),
-    monthIndex = pdate.getMonth(),
-    year = pdate.getFullYear(),
-    hour = pdate.getHours(),
-    minute = pdate.getMinutes();
-
-    // Return a string of the date
-    return day+" "+monthNames[monthIndex]+" "+year+" à "+hour+"h "+minutes;
-}
-
-
-function convertMs(ms){
-    var d, h, m, s;
-    s = Math.floor(ms / 1000);
-    m = Math.floor(s / 60);
-    s = s % 60;
-    h = Math.floor(m / 60);
-    m = m % 60;
-    d = Math.floor(h / 24);
-    h = h % 24;
-    h += d * 24;
-
-    // Return a string
-    return h+" heure(s) "+m+" minute(s) "+s+" seconde(s)";
-}
-
-// This function sort an array by keys
-function sortByKey(array, key) {
-    return array.sort(function(a, b) {
-        var x = a[key]; var y = b[key];
-        return ((x < y) ? 1 : ((x > y) ? -1 : 0));
-    });
-}
