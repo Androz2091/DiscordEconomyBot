@@ -36,6 +36,10 @@ bot.on("message", async (message) => {
         return;
     }
 
+    if(!message.member){
+        await message.guild.fetchMember(message.author.id);
+    }
+
     // If the message content is "/pay @Androz 10", the args will be : [ "pay", "@Androz", "10" ]
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     // The command will be : "pay" and the args : [ "@Androz", "10" ]
@@ -58,7 +62,7 @@ bot.on("message", async (message) => {
     updateXp(message, author_data);
 
     // Check if the member is an administrator
-    var isAdmin = config.administrators.includes(message.author.id) || config.administrators.includes(message.author.username+"#"+message.author.discriminator);
+    var isAdmin = config.administrators.includes(message.author.id) || config.administrators.includes(message.author.tag);
     
     /* USER COMMANDS */
 
@@ -210,8 +214,8 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    var delai = convertMs(isInCooldown - Date.now()); 
-                    return message.reply("vous devez attendre "+delai+" avant de pouvoir de nouveau travailler !");
+                    var delay = convertMs(isInCooldown - Date.now()); 
+                    return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau travailler !");
                 }
             }
     
@@ -251,8 +255,8 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    var delai = convertMs(isInCooldown - Date.now()); 
-                    return message.reply("vous devez attendre "+delai+" avant de pouvoir de nouveau executer cette commande !");
+                    var delay = convertMs(isInCooldown - Date.now()); 
+                    return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau executer cette commande !");
                 }
             }
 
