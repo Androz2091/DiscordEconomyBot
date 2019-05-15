@@ -1,14 +1,14 @@
 const Discord = require("discord.js"), // npm install discord.js
 ms = require("ms"), // npm install ms
-quickdb = require("quick.db"), // npm install quick.db
+Quickdb = require("quick.db"), // npm install quick.db
 asciitable = require("ascii-table"); // npm install ascii-table
 
 /* Create tables */
-const usersData = new quickdb.table("usersdata"),
+const usersData = new Quickdb.table("usersdata"),
 cooldowns = {
-    work:new quickdb.table("work"),
-    rep:new quickdb.table("rep"),
-    xp:new quickdb.table("xp")
+    work:new Quickdb.table("work"),
+    rep:new Quickdb.table("rep"),
+    xp:new Quickdb.table("xp")
 };
 
 

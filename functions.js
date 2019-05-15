@@ -11,7 +11,7 @@ module.exports = {
      * 
      * @returns The user profile (object)
      */
-    createUser: function (user, db, bot){
+    createUser(user, db, bot){
 
         // Set defaults user information
         db.set(user.id, {
@@ -40,20 +40,20 @@ module.exports = {
      * 
      * @returns The table with the users 
      */
-    fetchUsers: async function(array, table, bot) {
+    async fetchUsers(array, table, bot) {
         // Create promise
         return new Promise((resolve, reject) => {
             // Init counter
             let pos = 0;
             // Init new array
             let narray = [];
-            array.forEach(element => {
-                bot.fetchUser(element.id).then(user => {
+            array.forEach((element) => {
+                bot.fetchUser(element.id).then((user) => {
                      // Update counter variable
                     pos++;
                     // Update the username of the user 
                     let regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
-                    _user = user.username.replace(regex, "");
+                    let _user = user.username.replace(regex, "");
                     if(_user.length > 20){
                         _user.length = 20;
                     }
@@ -75,7 +75,7 @@ module.exports = {
      * 
      * @returns The user profile
      */
-    updateXp: function(msg, authorData, dbs){
+    updateXp(msg, authorData, dbs){
 
         let usersData = dbs[0];
         let xpCooldown = dbs[1];
@@ -107,10 +107,10 @@ module.exports = {
         usersData.set(msg.author.id+".xp", newXp);
     
         // calculation how many xp it takes for the next new one
-        let needed_xp = 5 * (level * level) + 80 * level + 100;
+        let neededXp = 5 * (level * level) + 80 * level + 100;
     
         // check if the member up to the next level
-        if(newXp > needed_xp){
+        if(newXp > neededXp){
             level++;
         }
     
@@ -127,7 +127,7 @@ module.exports = {
      * 
      * @returns The formatted date (string)
      */
-    printDate: function(pdate){
+    printDate(pdate){
         // An array of the months
         let monthNames = [
             "janvier", "février", "mars",
@@ -154,7 +154,7 @@ module.exports = {
      * 
      * @returns A string
      */
-    convertMs: function(ms){
+    convertMs(ms){
         let d, h, m, s;
         s = Math.floor(ms / 1000);
         m = Math.floor(s / 60);
@@ -177,11 +177,11 @@ module.exports = {
      * 
      * @returns The sorted array
      */
-    sortByKey: function(array, key) {
+    sortByKey(array, key) {
         return array.sort(function(a, b) {
             let x = a[key]; let y = b[key];
             return ((x < y) ? 1 : ((x > y) ? -1 : 0));
         });
     }
     
-}
+};
