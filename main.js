@@ -52,13 +52,13 @@ bot.on("message", async (message) => {
     // Get the current message author information or create a new default profile
     var authorData = usersData.get(message.author.id) || createUser(message.author);
 
-    var members_data = []; // Initialize a new empty array
+    var membersData = []; // Initialize a new empty array
 
     if(message.mentions.members.size > 0){ // If some members are mentionned
         message.mentions.members.forEach(member => { // For each member
             // Get the current member information or create a new default profile
-            var member_data = usersData.get(member.id) || createUser(member.user);
-            members_data.push(member_data);
+            var memberData = usersData.get(member.id) || createUser(member.user);
+            membersData.push(memberData);
         });
     }
 
@@ -113,7 +113,7 @@ bot.on("message", async (message) => {
             }
 
             // Gets the data of the guildMember whose profile you want to display
-            var data = (message.member === member) ? authorData : members_data[0];
+            var data = (message.member === member) ? authorData : membersData[0];
         
             var profile_embed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
                 .setAuthor("Profil de "+member.user.username+" !", member.user.displayAvatarURL) // Sets the heading of the embed
@@ -218,7 +218,7 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    var delay = convertMs(isInCooldown - Date.now()); 
+                    let delay = convertMs(isInCooldown - Date.now()); 
                     return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau travailler !");
                 }
             }
@@ -259,7 +259,7 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    var delay = convertMs(isInCooldown - Date.now()); 
+                    let delay = convertMs(isInCooldown - Date.now()); 
                     return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau executer cette commande !");
                 }
             }
@@ -301,7 +301,7 @@ bot.on("message", async (message) => {
             var leaderboard = [];
 
             // Fetch all users in the database and for each member, create a new object
-            usersData.fetchAll().forEach(user => {
+            usersData.fetchAll().forEach((user) => {
                 // if the user data is not an array, parse the user data
                 if(typeof user.data !== "object"){
                     user.data = JSON.parse(user.data);
@@ -398,7 +398,7 @@ bot.on("message", async (message) => {
             }
 
             // If the mentionned member isn"t premium
-            if(members_data[0].premium === "false"){
+            if(membersData[0].premium === "false"){
                 // Update user data
                 usersData.set(member.id+".premium", "true");
                 // sends a message of congratulations in the current channel
