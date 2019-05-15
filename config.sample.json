@@ -1,6 +1,7 @@
 {
     "token":"your discord bot secret token",
     "prefix":"!",
+    "game":"made by Androz",
     "embed":{
         "color":"#ff5b5b",
         "footer":"By Androz#2091 | Open Source DiscordBot"
