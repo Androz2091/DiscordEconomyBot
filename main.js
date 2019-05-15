@@ -1,7 +1,7 @@
 const Discord = require("discord.js"), // npm install discord.js
 ms = require("ms"), // npm install ms
 Quickdb = require("quick.db"), // npm install quick.db
-asciitable = require("ascii-table"); // npm install ascii-table
+AsciiTable = require("ascii-table"); // npm install ascii-table
 
 /* Create tables */
 const usersData = new Quickdb.table("usersdata"),
@@ -12,9 +12,9 @@ cooldowns = {
 };
 
 
-const config = require("./config.json"); // Load config.json file
+const config = require("./config.json"), // Load config.json file
 functions = require("./functions.js"),
-bot = new Discord.Client() // Create the discord Client
+bot = new Discord.Client(); // Create the discord Client
 
 bot.login(config.token); // Discord authentification
 
@@ -52,7 +52,7 @@ bot.on("message", (message) => {
     var membersData = []; // Initialize a new empty array
 
     if(message.mentions.members.size > 0){ // If some members are mentionned
-        message.mentions.members.forEach(member => { // For each member
+        message.mentions.members.forEach((member) => { // For each member
             // Get the current member information or create a new default profile
             var memberData = usersData.get(member.id) || functions.createUser(member.user, usersData);
             membersData.push(memberData);
@@ -73,7 +73,7 @@ bot.on("message", (message) => {
         *  Display all the bot commands
         */
         case "help":
-            var help_embed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
+            var helpEmbed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
                 .setAuthor("Bienvenue, "+message.author.username+"#"+message.author.discriminator, message.author.displayAvatarURL)
                 .setDescription("**Rappel** : `()` signifie paramètre facultatif et `[]` paramètre obligatoire")
                 .addField("👑 Commandes Administrateur", // Sets the title of the field
@@ -93,7 +93,7 @@ bot.on("message", (message) => {
                 .setFooter(config.embed.footer) // Sets the footer of the embed
                 .setTimestamp();
 
-            message.channel.send(help_embed); // Send the embed in the current channel
+            message.channel.send(helpEmbed); // Send the embed in the current channel
             break;
         
         /**
@@ -112,7 +112,7 @@ bot.on("message", (message) => {
             // Gets the data of the guildMember whose profile you want to display
             var data = (message.member === member) ? authorData : membersData[0];
         
-            var profile_embed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
+            var profileEmbed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
                 .setAuthor("Profil de "+member.user.username+" !", member.user.displayAvatarURL) // Sets the heading of the embed
                 // if the member has a description, display them, else display "Aucune description enregistrée !"
                 .setDescription(data.desc !== "unknow" ? data.desc : "Aucune biographie enregistrée !")
@@ -132,7 +132,7 @@ bot.on("message", (message) => {
                 .setFooter(config.embed.footer) // Sets the footer of the embed
                 .setTimestamp();
 
-            message.channel.send(profile_embed); // Send the embed in the current channel
+            message.channel.send(profileEmbed); // Send the embed in the current channel
             break;
 
         /**
@@ -318,16 +318,11 @@ bot.on("message", (message) => {
                 leaderboard.length = 20;
             }
 
-            var leaderboard_embed = new Discord.RichEmbed() // Creates a new Rich Embed
-                .setAuthor("Leaderboard", bot.user.displayAvatarURL)
-                .setColor(config.embed.color)
-                .setFooter(config.embed.footer)
-
             // Creates a new ascii table and set the heading
-            var table = new asciitable("LEADERBOARD").setHeading("", "Utilisateur", "Argent", "Réputation");
+            var table = new AsciiTable("LEADERBOARD").setHeading("", "Utilisateur", "Argent", "Réputation");
 
             // Put all users in the new table
-            functions.fetchUsers(leaderboard, table, bot).then(newTable => {
+            functions.fetchUsers(leaderboard, table, bot).then((newTable) => {
                 // Send the table in the current channel
                 message.channel.send("```"+newTable.toString()+"```");
             });
