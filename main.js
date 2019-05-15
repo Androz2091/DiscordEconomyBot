@@ -41,8 +41,8 @@ bot.on("message", async (message) => {
     }
 
     // Update message mentions
-    message.mentions.members = message.mentions.members.filter(m => !m.user.bot);
-    message.member.users = message.mentions.users.filter(u => !u.bot);
+    message.mentions.members = message.mentions.members.filter((m) => !m.user.bot);
+    message.member.users = message.mentions.users.filter((u) => !u.bot);
 
     // If the message content is "/pay @Androz 10", the args will be : [ "pay", "@Androz", "10" ]
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
