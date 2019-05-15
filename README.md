@@ -8,15 +8,15 @@ This bot is made for beginners in nodejs, it is possible to make a more advanced
 
 This bot contains the following commands :
 
-* `Profile` (display the profile of the message author or the profile of the first mentionned member)
-* `Work` (this command is limited to one use every 6 hours and allows you to earn credits)
-* `Rep` (this command is also limited to one use every 6 hours and allows you give a reputation point to an other member)
-* `Setbio` (define your biography, which will appear on your profile)
-* `Pay` (allows you to send credits to other members)
-* `Leaderboard` (display the first 20 members (for credits))
-* `Premium` (admin-only, this command define if a member is premium... or not)
-* `Cooldown` (admin-only, this command allows you to reinitialize a member's cooldown for a certain command)
-* `Setcredits` (admin-only, this command allows you to define the number of credits of a member)
+  - `Profile` (display the profile of the message author or the profile of the first mentionned member)
+  - `Work` (this command is limited to one use every 6 hours and allows you to earn credits)
+  - `Rep` (this command is also limited to one use every 6 hours and allows you give a reputation point to an other member)
+  - `Setbio` (define your biography, which will appear on your profile)
+  - `Pay` (allows you to send credits to other members)
+  - `Leaderboard` (display the first 20 members (for credits))
+  - `Premium` (admin-only, this command define if a member is premium... or not)
+  - `Cooldown` (admin-only, this command allows you to reinitialize a member's cooldown for a certain command)
+  - `Setcredits` (admin-only, this command allows you to define the number of credits of a member)
   
 ## Setup
 
