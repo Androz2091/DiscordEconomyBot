@@ -27,10 +27,14 @@ bot.on("ready", () => { // When the bot is ready
 bot.on("message", async (message) => {
         
     // If the message comes from a bot, cancel
-    if(message.author.bot || !message.guild) return;
+    if(message.author.bot || !message.guild){
+        return;
+    }
 
     // If the message does not start with the prefix, cancel
-    if(!message.content.startsWith(config.prefix)) return;
+    if(!message.content.startsWith(config.prefix)){
+        return;
+    }
 
     // If the message content is "/pay @Androz 10", the args will be : [ "pay", "@Androz", "10" ]
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
@@ -96,7 +100,9 @@ bot.on("message", async (message) => {
             var member = message.mentions.members.size > 0 ? message.mentions.members.first() : message.member;
 
             // Check if the member is a bot
-            if(member.user.bot) return message.reply("les bots n'ont pas de profil !");
+            if(member.user.bot){
+                return message.reply("les bots n'ont pas de profil !");
+            }
 
             // Gets the data of the guildMember whose profile you want to display
             var data = (message.member === member) ? author_data : members_data[0];
@@ -131,9 +137,13 @@ bot.on("message", async (message) => {
         case "setbio":
             var bio = args.join(" "); // Gets the description 
             // if the member has not entered a description, display an error message
-            if(!bio) return message.reply("veuillez entrer une biographie !");
+            if(!bio){
+                return message.reply("veuillez entrer une biographie !");
+            }
             // if the description is too long, display an error message 
-            if(bio.length > 100) return message.reply("votre biographie ne doit pas excéder les 100 caractères !");
+            if(bio.length > 100){
+                return message.reply("votre biographie ne doit pas excéder les 100 caractères !");
+            }
 
             // save the description in the database
             users_data.set(message.author.id+".bio", bio);
@@ -150,22 +160,33 @@ bot.on("message", async (message) => {
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
-            if(!member) return message.reply("vous devez mentionner un membre !");
+            if(!member){
+                return message.reply("vous devez mentionner un membre !");
+            }
 
             // if the user is a bot, cancel
-            if(member.user.bot) return message.reply("vous ne pouvez pas payer un bot !");
+            if(member.user.bot){
+                return message.reply("vous ne pouvez pas payer un bot !");
+            }
 
             // check if the receiver is the sender
-            if(member.id === message.author.id) return message.reply("vous ne pouvez pas vous payer vous même !");
+            if(member.id === message.author.id){
+                return message.reply("vous ne pouvez pas vous payer vous même !");
+            }
 
             // gets the amount of credits to send
             var amount_to_pay = args[1];
             // if the member has not entered a valid amount, display an error message
-            if(!amount_to_pay) return message.reply("vous devez entrer un montant à verser à **"+member.user.username+"** !");
-            if(isNaN(amount_to_pay)) return message.reply("montant invalide.");
-            if(amount_to_pay < 1) return message.reply("montant invalide.");
+            if(!amount_to_pay){
+                return message.reply("vous devez entrer un montant à verser à **"+member.user.username+"** !");
+            }
+            if(isNaN(amount_to_pay) || amount_to_pay < 1){
+                return message.reply("montant invalide.");
+            }
             // if the member does not have enough credits
-            if(amount_to_pay > author_data.credits) return message.reply("vous ne disposez pas d'assez de crédits pour effectuer cette transaction !");
+            if(amount_to_pay > author_data.credits){
+                return message.reply("vous ne disposez pas d'assez de crédits pour effectuer cette transaction !");
+            }
 
             // Adding credits to the receiver
             users_data.add(member.id+".credits", amount_to_pay);
@@ -238,13 +259,19 @@ bot.on("message", async (message) => {
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
-            if(!member) return message.reply("vous devez mentionner un membre !");
+            if(!member){
+                return message.reply("vous devez mentionner un membre !");
+            }
 
             // if the user is a bot, cancel
-            if(member.user.bot) return message.reply("vous ne pouvez pas donner un point de réputation à un bot !");
+            if(member.user.bot){
+                return message.reply("vous ne pouvez pas donner un point de réputation à un bot !");
+            }
 
             // if the member tries to give himself a reputation point, dispaly an error message
-            if(member.id === message.author.id) return message.reply("vous ne pouvez pas vous donner vous-même un point de réputation !");
+            if(member.id === message.author.id){
+                return message.reply("vous ne pouvez pas vous donner vous-même un point de réputation !");
+            }
 
             // Records in the database the time when the member will be able to execute the command again (in 6 hours)
             var towait = Date.now() + ms("6h");
@@ -268,7 +295,9 @@ bot.on("message", async (message) => {
             // Fetch all users in the database and for each member, create a new object
             users_data.fetchAll().forEach(user => {
                 // if the user data is not an array, parse the user data
-                if(typeof user.data !== "object") user.data = JSON.parse(user.data);
+                if(typeof user.data !== "object"){
+                    user.data = JSON.parse(user.data);
+                }
                 // Push the user data in the empty array
                 leaderboard.push({
                     id:user.ID,
@@ -279,7 +308,10 @@ bot.on("message", async (message) => {
 
             // Sort the array by credits
             leaderboard = sortByKey(leaderboard, "credits");
-            if(leaderboard.length > 20) leaderboard.length = 20;
+            // Resize the leaderboard
+            if(leaderboard.length > 20){
+                leaderboard.length = 20;
+            }
 
             var leaderboard_embed = new Discord.RichEmbed() // Creates a new Rich Embed
                 .setAuthor("Leaderboard", bot.user.displayAvatarURL)
@@ -305,23 +337,31 @@ bot.on("message", async (message) => {
 
         case "setcredits":
             // if the user is not an administrator
-            if(!isAdmin) return message.reply("vous ne pouvez pas exécuter cette commande !");
+            if(!isAdmin){
+                return message.reply("vous ne pouvez pas exécuter cette commande !");
+            }
 
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
-            if(!member) return message.reply("vous devez mentionner un membre !");
+            if(!member){
+                return message.reply("vous devez mentionner un membre !");
+            }
 
             // if the user is a bot, cancel
-            if(member.user.bot) return message.reply("vous ne pouvez pas donner des crédits à un bot !");
+            if(member.user.bot){
+                return message.reply("vous ne pouvez pas donner des crédits à un bot !");
+            }
 
             // gets the amount of credits to send
             var nb_credits = args[1];
             // if the member has not entered a valid amount, display an error message
-            if(isNaN(nb_credits) || !nb_credits) return message.reply("vous devez entrer un montant pour **"+member.user.username+"** !");
+            if(isNaN(nb_credits) || !nb_credits){
+                return message.reply("vous devez entrer un montant pour **"+member.user.username+"** !");
+            }
 
             // Update user data
-            users_data.set(member.id+".credits", parseInt(nb_credits));
+            users_data.set(member.id+".credits", parseInt(nb_credits, 10));
         
             // Send success message in the current channel
             message.reply("crédits définis à **"+nb_credits+"** pour **"+member.user.username+"** !");
@@ -333,15 +373,21 @@ bot.on("message", async (message) => {
         */
        case "premium":
         // if the user is not administrator
-            if(!isAdmin) return message.reply("vous ne pouvez pas exécuter cette commande !");
+            if(!isAdmin){
+                return message.reply("vous ne pouvez pas exécuter cette commande !");
+            }
 
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
-            if(!member) return message.reply("vous devez mentionner un membre !");
+            if(!member){
+                return message.reply("vous devez mentionner un membre !");
+            }
 
             // if the user is a bot, cancel
-            if(member.user.bot) return message.reply("vous ne pouvez pas passer un bot premium !");
+            if(member.user.bot){
+                return message.reply("vous ne pouvez pas passer un bot premium !");
+            }
 
             // If the mentionned member isn"t premium
             if(members_data[0].premium === "false"){
@@ -364,20 +410,28 @@ bot.on("message", async (message) => {
         */
         case "cooldown":
             // if the user is not administrator
-            if(!isAdmin) return message.reply("vous ne pouvez pas exécuter cette commande !");
+            if(!isAdmin){
+                return message.reply("vous ne pouvez pas exécuter cette commande !");
+            }
 
             // Gets the command 
             var cmd = args[0];
             // if the command is not rep or work or there is no command, display an error message
-            if(!cmd || ((cmd !== "rep") && (cmd !== "work"))) return message.reply("entrez une commande valide (rep ou work) !");
+            if(!cmd || ((cmd !== "rep") && (cmd !== "work"))){
+                return message.reply("entrez une commande valide (rep ou work) !");
+            }
 
             // Gets the first mentionned member
             var member = message.mentions.members.first();
             // if doesn't exist, display an error message
-            if(!member) return message.reply("vous devez mentionner un membre !");
+            if(!member){
+                return message.reply("vous devez mentionner un membre !");
+            }
 
             // if the user is a bot, cancel
-            if(member.user.bot) return message.reply("vous ne pouvez pas reset le cooldown d'un bot !");
+            if(member.user.bot){
+                return message.reply("vous ne pouvez pas reset le cooldown d'un bot !");
+            }
 
             // Update cooldown db
             cooldowns[cmd].set(member.id, 0);
@@ -398,7 +452,9 @@ bot.on("message", async (message) => {
 function createUser(user){
 
     // if the user is a bot
-    if(user.bot) return;
+    if(user.bot){
+        return;
+    }
 
     // Set defaults user information
     users_data.set(user.id, {
@@ -425,8 +481,8 @@ function createUser(user){
 function updateXp(msg, userdata){
 
     // Gets the user informations
-    var xp = parseInt(userdata.niv.xp);
-    var level = parseInt(userdata.niv.level);
+    var xp = parseInt(userdata.niv.xp, 10);
+    var level = parseInt(userdata.niv.level, 10);
 
     // if the member is already in the cooldown db
     var isInCooldown = cooldowns.xp.get(msg.author.id);
@@ -434,7 +490,9 @@ function updateXp(msg, userdata){
         /*if the timestamp recorded in the database indicating 
         when the member will be able to win xp again
         is greater than the current date, return */
-        if(isInCooldown > Date.now()) return;
+        if(isInCooldown > Date.now()){
+            return;
+        }
     }
     // Records in the database the time when the member will be able to win xp again (3min)
     var towait = Date.now() + ms("1m");
@@ -443,7 +501,7 @@ function updateXp(msg, userdata){
     // Gets a random number between 10 and 5 
     let won = Math.floor(Math.random() * ( Math.floor(10) - Math.ceil(5))) + Math.ceil(5);
     
-    let newXp = parseInt(xp + won);
+    let newXp = parseInt(xp + won, 10);
 
     // Update user data
     users_data.set(msg.author.id+".niv.xp", newXp);
@@ -452,7 +510,9 @@ function updateXp(msg, userdata){
     let needed_xp = 5 * (level * level) + 80 * level + 100;
 
     // check if the member up to the next level
-    if(newXp > needed_xp) level++;
+    if(newXp > needed_xp){
+        level++;
+    }
 
     // Update user data
     users_data.set(msg.author.id+".niv.level", level);
@@ -476,7 +536,9 @@ async function fetchUsers(array, table) {
                 // Update the username of the user 
                 var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
                 _user = user.username.replace(regex, "");
-                if(_user.length > 20) _user.length = 20
+                if(_user.length > 20){
+                    _user.length = 20;
+                }
                 // Add new row to the ascii table
                 table.addRow(pos, _user, element.credits, element.rep);
             });
