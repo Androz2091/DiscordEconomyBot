@@ -40,6 +40,10 @@ bot.on("message", async (message) => {
         await message.guild.fetchMember(message.author.id);
     }
 
+    // Update message mentions
+    message.mentions.members = message.mentions.members.filter(m => !m.user.bot);
+    message.member.users = message.mentions.users.filter(u => !u.bot);
+
     // If the message content is "/pay @Androz 10", the args will be : [ "pay", "@Androz", "10" ]
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     // The command will be : "pay" and the args : [ "@Androz", "10" ]
@@ -454,11 +458,6 @@ bot.on("message", async (message) => {
 */
 
 function createUser(user){
-
-    // if the user is a bot
-    if(user.bot){
-        return;
-    }
 
     // Set defaults user information
     usersData.set(user.id, {
