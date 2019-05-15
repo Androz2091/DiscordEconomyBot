@@ -4,7 +4,7 @@ quickdb = require("quick.db"), // npm install quick.db
 asciitable = require("ascii-table"); // npm install ascii-table
 
 /* Create tables */
-const users_data = new quickdb.table("usersdata"),
+const usersData = new quickdb.table("usersdata"),
 cooldowns = {
     work:new quickdb.table("work"),
     rep:new quickdb.table("rep"),
@@ -36,29 +36,33 @@ bot.on("message", async (message) => {
         return;
     }
 
+    if(!message.member){
+        await message.guild.fetchMember(message.author.id);
+    }
+
     // If the message content is "/pay @Androz 10", the args will be : [ "pay", "@Androz", "10" ]
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     // The command will be : "pay" and the args : [ "@Androz", "10" ]
     const command = args.shift().toLowerCase();
 
     // Get the current message author information or create a new default profile
-    var author_data = users_data.get(message.author.id) || createUser(message.author);
+    var authorData = usersData.get(message.author.id) || createUser(message.author);
 
     var members_data = []; // Initialize a new empty array
 
     if(message.mentions.members.size > 0){ // If some members are mentionned
         message.mentions.members.forEach(member => { // For each member
             // Get the current member information or create a new default profile
-            var member_data = users_data.get(member.id) || createUser(member.user);
+            var member_data = usersData.get(member.id) || createUser(member.user);
             members_data.push(member_data);
         });
     }
 
     // updates the user data by adding xp
-    updateXp(message, author_data);
+    updateXp(message, authorData);
 
     // Check if the member is an administrator
-    var isAdmin = config.administrators.includes(message.author.id) || config.administrators.includes(message.author.username+"#"+message.author.discriminator);
+    var isAdmin = config.administrators.includes(message.author.id) || config.administrators.includes(message.author.tag);
     
     /* USER COMMANDS */
 
@@ -105,7 +109,7 @@ bot.on("message", async (message) => {
             }
 
             // Gets the data of the guildMember whose profile you want to display
-            var data = (message.member === member) ? author_data : members_data[0];
+            var data = (message.member === member) ? authorData : members_data[0];
         
             var profile_embed = new Discord.RichEmbed() // Creates a new rich embed (see https://discord.js.org/#/docs/main/stable/class/RichEmbed)
                 .setAuthor("Profil de "+member.user.username+" !", member.user.displayAvatarURL) // Sets the heading of the embed
@@ -146,7 +150,7 @@ bot.on("message", async (message) => {
             }
 
             // save the description in the database
-            users_data.set(message.author.id+".bio", bio);
+            usersData.set(message.author.id+".bio", bio);
 
             // Send a success message
             message.reply("votre description vient d'être mise à jour !");
@@ -175,23 +179,23 @@ bot.on("message", async (message) => {
             }
 
             // gets the amount of credits to send
-            var amount_to_pay = args[1];
+            var amountToPay = args[1];
             // if the member has not entered a valid amount, display an error message
-            if(!amount_to_pay){
+            if(!amountToPay){
                 return message.reply("vous devez entrer un montant à verser à **"+member.user.username+"** !");
             }
-            if(isNaN(amount_to_pay) || amount_to_pay < 1){
+            if(isNaN(amountToPay) || amountToPay < 1){
                 return message.reply("montant invalide.");
             }
             // if the member does not have enough credits
-            if(amount_to_pay > author_data.credits){
+            if(amountToPay > authorData.credits){
                 return message.reply("vous ne disposez pas d'assez de crédits pour effectuer cette transaction !");
             }
 
             // Adding credits to the receiver
-            users_data.add(member.id+".credits", amount_to_pay);
+            usersData.add(member.id+".credits", amountToPay);
             // Removes credits from the sender
-            users_data.subtract(message.author.id+".credits", amount_to_pay);
+            usersData.subtract(message.author.id+".credits", amountToPay);
 
             // Send a success message
             message.reply("transaction effectuée.");
@@ -210,8 +214,8 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    var delai = convertMs(isInCooldown - Date.now()); 
-                    return message.reply("vous devez attendre "+delai+" avant de pouvoir de nouveau travailler !");
+                    var delay = convertMs(isInCooldown - Date.now()); 
+                    return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau travailler !");
                 }
             }
     
@@ -220,10 +224,10 @@ bot.on("message", async (message) => {
             cooldowns.work.set(message.author.id, towait);
             
             // Salary calculation (if the member is premium, the salary is doubled)
-            var salary = (author_data.premium === "true") ? 400 : 200;
+            var salary = (authorData.premium === "true") ? 400 : 200;
 
             // Add "premium" if the member is premium
-            var heading = (author_data.premium === "true") ? "Salaire premium récupéré !" : "Salaire récupéré !";
+            var heading = (authorData.premium === "true") ? "Salaire premium récupéré !" : "Salaire récupéré !";
 
             var embed = new Discord.RichEmbed() // Creates a new rich embed
                 .setAuthor(heading) // sets the heading of the embed
@@ -233,7 +237,7 @@ bot.on("message", async (message) => {
                 .setTimestamp();
             
             // Update user data
-            users_data.add(message.author.id+".credits", salary);
+            usersData.add(message.author.id+".credits", salary);
 
             // Send the embed in the current channel
             message.channel.send(embed);
@@ -251,8 +255,8 @@ bot.on("message", async (message) => {
                 when the member will be able to execute the order again 
                 is greater than the current date, display an error message */
                 if(isInCooldown > Date.now()){
-                    var delai = convertMs(isInCooldown - Date.now()); 
-                    return message.reply("vous devez attendre "+delai+" avant de pouvoir de nouveau executer cette commande !");
+                    var delay = convertMs(isInCooldown - Date.now()); 
+                    return message.reply("vous devez attendre "+delay+" avant de pouvoir de nouveau executer cette commande !");
                 }
             }
 
@@ -278,7 +282,7 @@ bot.on("message", async (message) => {
             cooldowns.rep.set(message.author.id, towait);
 
             // Update member data 
-            users_data.add(member.id+".rep", 1);
+            usersData.add(member.id+".rep", 1);
 
             // send a success message in the current channel
             message.reply("vous avez bien donné un point de réputation à **"+member.user.username+"** !");
@@ -293,7 +297,7 @@ bot.on("message", async (message) => {
             var leaderboard = [];
 
             // Fetch all users in the database and for each member, create a new object
-            users_data.fetchAll().forEach(user => {
+            usersData.fetchAll().forEach(user => {
                 // if the user data is not an array, parse the user data
                 if(typeof user.data !== "object"){
                     user.data = JSON.parse(user.data);
@@ -354,17 +358,17 @@ bot.on("message", async (message) => {
             }
 
             // gets the amount of credits to send
-            var nb_credits = args[1];
+            var toAdd = args[1];
             // if the member has not entered a valid amount, display an error message
-            if(isNaN(nb_credits) || !nb_credits){
+            if(isNaN(toAdd) || !toAdd){
                 return message.reply("vous devez entrer un montant pour **"+member.user.username+"** !");
             }
 
             // Update user data
-            users_data.set(member.id+".credits", parseInt(nb_credits, 10));
+            usersData.set(member.id+".credits", parseInt(toAdd, 10));
         
             // Send success message in the current channel
-            message.reply("crédits définis à **"+nb_credits+"** pour **"+member.user.username+"** !");
+            message.reply("crédits définis à **"+toAdd+"** pour **"+member.user.username+"** !");
             break;
         
         /**
@@ -392,13 +396,13 @@ bot.on("message", async (message) => {
             // If the mentionned member isn"t premium
             if(members_data[0].premium === "false"){
                 // Update user data
-                users_data.set(member.id+".premium", "true");
+                usersData.set(member.id+".premium", "true");
                 // sends a message of congratulations in the current channel
                 message.channel.send(":tada: Félicitations "+member+" ! Vous faites désormais parti des membres premium !");
             } 
             else { // if the member is premium
                 // Update user data
-                users_data.set(member.id+".premium", "false");
+                usersData.set(member.id+".premium", "false");
                 // send a message in the current channel
                 message.channel.send(":confused: Dommage "+member+"... Vous ne faites désormais plus parti des membres premium !");
             }
@@ -457,7 +461,7 @@ function createUser(user){
     }
 
     // Set defaults user information
-    users_data.set(user.id, {
+    usersData.set(user.id, {
         credits:0,
         rep:0,
         niv: { level:0, xp:0 },
@@ -470,7 +474,7 @@ function createUser(user){
     console.log("\x1b[32m","[DB]","\x1b[0m", "User \""+user.username+"\" registered ! ID : \""+user.id+"\"");
 
     // Return user data
-    return users_data.get(user.id);
+    return usersData.get(user.id);
 }
 
 /**
@@ -504,7 +508,7 @@ function updateXp(msg, userdata){
     let newXp = parseInt(xp + won, 10);
 
     // Update user data
-    users_data.set(msg.author.id+".niv.xp", newXp);
+    usersData.set(msg.author.id+".niv.xp", newXp);
 
     // calculation how many xp it takes for the next new one
     let needed_xp = 5 * (level * level) + 80 * level + 100;
@@ -515,7 +519,7 @@ function updateXp(msg, userdata){
     }
 
     // Update user data
-    users_data.set(msg.author.id+".niv.level", level);
+    usersData.set(msg.author.id+".niv.level", level);
 }
 /**
  * fetchUsers
