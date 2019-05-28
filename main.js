@@ -1,14 +1,17 @@
 const Discord = require("discord.js"), // npm install discord.js
 ms = require("ms"), // npm install ms
-Quickdb = require("quick.db"), // npm install quick.db
+Quickdb = require("quick.db"), // npm install Androz2091/quick.db
 AsciiTable = require("ascii-table"); // npm install ascii-table
 
+// Replace json.sqlite by the file name of your choice
+Quickdb.init("./json.sqlite");
+
 /* Create tables */
-const usersData = new Quickdb.table("usersdata"),
+const usersData = new Quickdb.Table("usersdata"),
 cooldowns = {
-    work:new Quickdb.table("work"),
-    rep:new Quickdb.table("rep"),
-    xp:new Quickdb.table("xp")
+    work:new Quickdb.Table("work"),
+    rep:new Quickdb.Table("rep"),
+    xp:new Quickdb.Table("xp")
 };
 
 
