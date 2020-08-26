@@ -4,6 +4,7 @@
   "description": "A very simple bot with an economy system using the Discord.js API",
   "main": "main.js",
   "scripts": {
+    "start": "node main.js",
     "test": "node main.js"
   },
   "repository": {
