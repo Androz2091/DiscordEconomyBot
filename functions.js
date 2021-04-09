@@ -19,7 +19,7 @@ module.exports = {
             rep:0,
             level:0, 
             xp:0,
-            desc:"unknow",
+            desc:"Bio: Unknown",
             premium:"false",
             registeredAt:require("./functions.js").printDate(new Date(Date.now()))
         });
@@ -46,7 +46,7 @@ module.exports = {
             // Init counter
             let pos = 0;
             // Init new array
-            let narray = [];
+            let array = [];
             array.forEach((element) => {
                 bot.fetchUser(element.id).then((user) => {
                      // Update counter variable
@@ -144,7 +144,7 @@ module.exports = {
         minute = pdate.getMinutes();
     
         // Return a string of the date
-        return day+" "+monthNames[monthIndex]+" "+year+" Y "+hour+"H"+minute;
+        return day+" "+monthNames[monthIndex]+" "+year+" Y "+hour+" H "+minute;
     },
 
     /**
