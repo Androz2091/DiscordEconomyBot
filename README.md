@@ -27,16 +27,17 @@ You need to rename the `config.sample.json` file to `config.json` and edit it be
 {
     "token":"your discord bot secret token",
     "prefix":"!",
-    "game":"made by Androz",
+    "game":"made by Androz, Transalation by ItzMeGamer",
     "embed":{
         "color":"#ff5b5b",
-        "footer":"By Androz#2091"
+        "footer":"By Androz#2091 , 𝙸𝚝𝚣𝙼𝚎𝙶𝚊𝚖𝚎𝚛𝚈𝚃𝙲𝚑𝚊𝚗𝚗𝚎𝚕#2262 | Open Source DiscordBot"
     },
     "administrators":[
         "AdminID",
         "AdminID"
     ]
 }
+
 ```
 
 In the token field, replace `your discord bot secret token` by your bot token.
@@ -52,3 +53,9 @@ The administrators field (the accounts that will be able to execute admin only c
 To install the required node modules, simply type `npm install` and all dependencies will be installed!
 
 Once all this is done, you can start the `main.js` file!
+Start the `main.js` file by `node main.js`
+
+## Credits
+
+Coding by Androz
+Transalation by ItzMeGamer

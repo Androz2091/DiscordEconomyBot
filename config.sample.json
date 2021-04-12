@@ -1,10 +1,10 @@
 {
     "token":"your discord bot secret token",
     "prefix":"!",
-    "game":"made by Androz",
+    "game":"made by Androz, Transalation by ItzMeGamer",
     "embed":{
         "color":"#ff5b5b",
-        "footer":"By Androz#2091 | Open Source DiscordBot"
+        "footer":"By Androz#2091 , 𝙸𝚝𝚣𝙼𝚎𝙶𝚊𝚖𝚎𝚛𝚈𝚃𝙲𝚑𝚊𝚗𝚗𝚎𝚕#2262 | Open Source DiscordBot"
     },
     "administrators":[
         "AdminID",
