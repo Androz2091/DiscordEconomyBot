@@ -1,10 +1,10 @@
 {
-    "token":"your discord bot secret token",
+    "token":"ODAyOTI0MDc2ODY2OTk0MTg2.YA2TUQ.RWneg2MCaZRLJvpn_Y_a6qJN-v0"",
     "prefix":"!",
     "game":"made by Androz",
     "embed":{
         "color":"#ff5b5b",
-        "footer":"By Androz#2091 | Open Source DiscordBot"
+        "footer":"By charlie"
     },
     "administrators":[
         "AdminID",
