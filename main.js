@@ -1,5 +1,4 @@
 const Discord = require("discord.js"), // npm install discord.js
-ms = require("ms"), // npm install ms
 Quickdb = require("quick.db"), // npm install Androz2091/quick.db
 AsciiTable = require("ascii-table"); // npm install ascii-table
 
@@ -224,7 +223,7 @@ bot.on("message", (message) => {
             }
     
             // Records in the database the time when the member will be able to execute the command again (in 6 hours)
-            var towait = Date.now() + ms("6h");
+            var towait = Date.now() + 21600000; //6 hours
             cooldowns.work.set(message.author.id, towait);
             
             // Salary calculation (if the member is premium, the salary is doubled)
@@ -282,7 +281,7 @@ bot.on("message", (message) => {
             }
 
             // Records in the database the time when the member will be able to execute the command again (in 6 hours)
-            var towait = Date.now() + ms("6h");
+            var towait = Date.now() + 21600000; //6 hours
             cooldowns.rep.set(message.author.id, towait);
 
             // Update member data 

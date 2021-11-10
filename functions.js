@@ -1,5 +1,4 @@
 const Discord = require("discord.js"),
-ms = require("ms");
 
 module.exports = {
 
@@ -95,7 +94,7 @@ module.exports = {
             }
         }
         // Records in the database the time when the member will be able to win xp again (3min)
-        let towait = Date.now() + ms("1m");
+        let towait = Date.now() + 180000; //3 mins
         xpCooldown.set(msg.author.id, towait);
         
         // Gets a random number between 10 and 5 
